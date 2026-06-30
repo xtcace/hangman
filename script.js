@@ -1,19 +1,23 @@
-import { BombGame } from "./js/class.js";
+// main entry point - this file wires everything together:
+// the game logic (class), the screen (render), the keyboard and the timer.
+import { HangmanBombGame } from "./js/class.js";
 import render from "./js/render.js";
 import { buildKeyboard } from "./js/keyboard.js";
 import { Timer } from "./js/timer.js";
 import words from "./example-words.json" with { type: "json" };
 
+// game settings - kept up here so they're easy to tweak
 const MAX_GUESSES = 6;
 const START_TIME = 60;
 
-// --- DOM refs ---
+// grab the bits of the page we need to talk to
 const keyboardEl = document.querySelector(".keyboard");
 const resetBtn = document.querySelector(".reset-btn");
 const timerDisplay = document.querySelector(".timer__display");
 const timerProgress = document.querySelector(".timer__progress");
 
-// --- optional audio (won't crash if files are missing) ---
+// audio is optional - if a sound file is missing this just returns a
+// dummy object so the game never crashes trying to play a sound
 const sound = (src) => {
   try {
     return new Audio(src);
@@ -26,26 +30,29 @@ const loseAudio = sound("assets/audio/lose.mp3");
 const clickAudio = sound("assets/audio/click_1.mp3");
 const errorAudio = sound("assets/audio/click_error.mp3");
 
+// little helper to play a sound from the start, ignoring any errors
 const play = (audio) => {
   try {
     audio.currentTime = 0;
     audio.play();
   } catch {
-    /* assets are optional */
+    // assets are optional, so we just ignore failures here
   }
 };
 
-// --- game state ---
+// these hold the current game + timer. they get rebuilt every new round
 let game;
 let timer;
 let timerStarted = false;
 
+// pick a random word from the list
 function pickWord() {
   return words[Math.floor(Math.random() * words.length)];
 }
 
+// start a fresh round - new word, fresh timer, reset the screen
 function newGame() {
-  game = new BombGame(pickWord(), MAX_GUESSES);
+  game = new HangmanBombGame(pickWord(), MAX_GUESSES);
   timerStarted = false;
 
   if (timer) timer.reset();
@@ -53,6 +60,7 @@ function newGame() {
     duration: START_TIME,
     onTick: updateTimer,
     onExpire: () => {
+      // time ran out, so the player loses
       game.loseByTime();
       finishGame();
     },
@@ -64,6 +72,7 @@ function newGame() {
   enableKeyboard();
 }
 
+// update the timer number + the progress bar width each second
 function updateTimer(remaining, total) {
   if (timerDisplay) timerDisplay.textContent = remaining;
   if (timerProgress) {
@@ -71,59 +80,34 @@ function updateTimer(remaining, total) {
   }
 }
 
+// runs every time the player guesses a letter (click or keyboard)
 function handleGuess(letter) {
+  // ignore anything that isn't a single a-z letter
   if (!/^[a-z]$/.test(letter)) return;
-  if (game.isWon || game.isLost) return;
-  if (game.guessedLetters.includes(letter)) return;
+  // ignore guesses once the game is over or if it's a repeat
+  if (game.isOver || game.alreadyGuessed(letter)) return;
 
-  // start the countdown on the first guess
+  // the timer only starts on the very first guess
   if (!timerStarted) {
     timer.start();
     timerStarted = true;
   }
 
-  const wasCorrect = game.word.includes(letter);
+  // check before guessing so we know which sound to play
+  const wasCorrect = game.hasLetter(letter);
   game.guess(letter);
   play(wasCorrect ? clickAudio : errorAudio);
 
   render(game);
 
-  if (game.isWon || game.isLost) finishGame();
+  // if that guess ended the game, wrap it up
+  if (game.isOver) finishGame();
 }
 
+// stop the timer, lock the keyboard, show the play-again button
 function finishGame() {
   timer.stop();
   render(game);
   disableKeyboard();
   resetBtn.classList.remove("is-hidden");
-  play(game.isWon ? winAudio : loseAudio);
-}
-
-function enableKeyboard() {
-  document.querySelectorAll(".keyboard__key").forEach((key) => {
-    key.disabled = false;
-  });
-}
-
-function disableKeyboard() {
-  document.querySelectorAll(".keyboard__key").forEach((key) => {
-    key.disabled = true;
-  });
-}
-
-// --- events ---
-buildKeyboard(keyboardEl);
-
-keyboardEl.addEventListener("click", (e) => {
-  const key = e.target.closest(".keyboard__key");
-  if (key) handleGuess(key.dataset.letter);
-});
-
-// bonus: keyboard input
-document.addEventListener("keydown", (e) => {
-  handleGuess(e.key.toLowerCase());
-});
-
-resetBtn.addEventListener("click", newGame);
-
-newGame();
+  play(game.isWon ? winAudio :
