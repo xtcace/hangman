@@ -1,4 +1,4 @@
-BOMB DEFUSER
+HANGMAN HANGMAN
 
 A good fucking take on the classic Hangman game. Instead of drawing a stick figure, you're
 defusing a bomb: guess the hidden word one letter at a time before you run out
