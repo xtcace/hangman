@@ -1,0 +1,58 @@
+@use "variables" as *;
+
+.word-display {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &__letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+    height: 2.6rem;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    border-bottom: 4px solid $muted;
+    color: $ink;
+  }
+}
+
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+
+  &__row {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  &__key {
+    min-width: 44px;
+    padding: 0.4rem;
+    font-size: 0.7rem;
+
+    &--correct {
+      background-color: $success !important;
+      color: #06140b !important;
+    }
+
+    &--wrong {
+      background-color: $danger !important;
+      color: #1a0606 !important;
+    }
+  }
+}
+
+.reset-btn {
+  align-self: center;
+}
+
+.is-hidden {
+  display: none !important;
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/nes.css@latest/css/nes.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module" src="./script.js" defer></script>
+    <title>Bomb Defuser</title>
+  </head>
+  <body class="warehouse-bg">
+    <main>
+      <div class="game-container">
+        <header class="header nes-container with-title is-centered is-rounded">
+          <p class="title">Bomb Defuser</p>
+          <div class="header__status">
+            <p>Guesses Remaining: <span class="guesses-remaining"></span></p>
+            <p class="header__message"></p>
+          </div>
+        </header>
+
+        <section class="timer">
+          <p>Time: <span class="timer__display">60</span>s</p>
+          <progress
+            class="nes-progress is-error timer__progress-el"
+            value="100"
+            max="100"
+          ></progress>
+          <!-- width-driven bar fallback if you prefer a plain div -->
+          <div class="timer__progress" style="display: none"></div>
+        </section>
+
+        <section class="word-display"></section>
+
+        <section class="keyboard"></section>
+
+        <button type="button" class="nes-btn is-warning reset-btn is-hidden">
+          Play again
+        </button>
+      </div>
+    </main>
+  </body>
+</html>
