@@ -57,9 +57,9 @@ export class BombGame {
   get message() {
     switch (this.status) {
       case "DEFUSED":
-        return "Bomb defused. Nice work.";
+        return "Bomb defused. Nice work."; // change this line to something realistic
       case "EXPLODED":
-        return this.timeUp ? "Time's up — boom." : "Boom. The bomb went off.";
+        return "Bomb exploded. Unlucky."; // changed it 
       default:
         return "Defuse the bomb: guess the word.";
     }
