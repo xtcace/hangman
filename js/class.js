@@ -1,17 +1,23 @@
 export class BombGame {
   constructor(word, maxGuesses) {
     this.word = word;
-    this.guessedLetters = [];
     this.maxGuesses = maxGuesses;
-    this.numberOfLettersToGuess = [...new Set(this.word.split(""))].length;
+    this.guessedLetters = [];
     this.timeUp = false;
   }
 
+  // --- helpers ---
+  hasLetter(letter) {
+    return this.word.includes(letter);
+  }
+
+  alreadyGuessed(letter) {
+    return this.guessedLetters.includes(letter);
+  }
+
+  // --- actions ---
   guess(letter) {
-    // no guesses if the game is already won or lost
-    if (this.isLost || this.isWon) return;
-    // ignore letters that have already been guessed
-    if (this.guessedLetters.includes(letter)) return;
+    if (this.isOver || this.alreadyGuessed(letter)) return;
     this.guessedLetters.push(letter);
   }
 
@@ -19,18 +25,17 @@ export class BombGame {
     this.timeUp = true;
   }
 
-  get displayWord() {
-    return this.word
-      .split("")
-      .map((letter) => (this.guessedLetters.includes(letter) ? letter : "_"));
+  // --- derived state ---
+  get numberOfLettersToGuess() {
+    return new Set(this.word).size;
   }
 
-  get correctGuesses() {
-    return this.guessedLetters.filter((letter) => this.word.includes(letter));
+  get displayWord() {
+    return [...this.word].map((l) => (this.alreadyGuessed(l) ? l : "_"));
   }
 
   get wrongGuesses() {
-    return this.guessedLetters.filter((letter) => !this.word.includes(letter));
+    return this.guessedLetters.filter((l) => !this.hasLetter(l));
   }
 
   get guessesRemaining() {
@@ -38,30 +43,26 @@ export class BombGame {
   }
 
   get isWon() {
-    return this.word
-      .split("")
-      .every((letter) => this.guessedLetters.includes(letter));
+    return [...this.word].every((l) => this.alreadyGuessed(l));
   }
 
   get isLost() {
     return this.timeUp || this.guessesRemaining <= 0;
   }
 
+  get isOver() {
+    return this.isWon || this.isLost;
+  }
+
   get status() {
     if (this.isWon) return "DEFUSED";
     if (this.isLost) return "EXPLODED";
-    if (this.guessedLetters.length === 0) return "DORMANT";
-    return "ACTIVE";
+    return this.guessedLetters.length ? "ACTIVE" : "DORMANT";
   }
 
   get message() {
-    switch (this.status) {
-      case "DEFUSED":
-        return "Bomb defused. Nice work."; // change this line to something realistic
-      case "EXPLODED":
-        return "Bomb exploded. Unlucky."; // changed it 
-      default:
-        return "Defuse the bomb: guess the word.";
-    }
+    if (this.isWon) return "Bomb defused. Nice work.";
+    if (this.isLost) return "Bomb exploded. Unlucky.";
+    return "Defuse the bomb: guess the word.";
   }
 }
