@@ -2,7 +2,7 @@ HANGMAN HANGMAN
 
 A good fucking take on the classic Hangman game. Instead of drawing a stick figure, you're
 defusing a bomb: guess the hidden word one letter at a time before you run out
-of guesses or the timer hits zero.
+of guesses or the timer hits zero. qucik finish
 
 Built with vanilla JavaScript (ES modules), SCSS, and [NES.css](https://nostalgic-css.github.io/NES.css/)
 for the retro look. Game logic is fully unit-tested with Jest.
