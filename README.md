@@ -15,7 +15,3 @@ THE FEATURES
 - 60-second countdown — let it expire and the bomb goes off
 - Win ("DEFUSED") / loss ("EXPLODED") states with a play-again reset
 - Correct/wrong keys are colour-coded and disabled once used
-
-Keeping the rules in a class with no DOM access is what makes the logic
-testable — `class.test.js` can check wins, losses and edge cases without a
-browser.
