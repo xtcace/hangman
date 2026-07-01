@@ -1,7 +1,7 @@
 {
-  "name": "bomb-defuser",
+  "name": "hangman",
   "version": "1.0.0",
-  "description": "A Bomb Defuser (Hangman) game built with vanilla JS, SCSS and NES.css.",
+  "description": "A Hangman game built with vanilla JS, SCSS and NES.css.",
   "type": "module",
   "scripts": {
     "test": "jest",
